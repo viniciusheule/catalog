@@ -1,5 +1,6 @@
 package com.devsuperior.dscatalog.services;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 
 import java.util.List;
@@ -58,22 +59,23 @@ public class ProductServiceTests {
 		Mockito.when(repository.findById(existingId)).thenReturn(Optional.of(product));
 		Mockito.when(repository.findById(nonExistingId)).thenReturn(Optional.empty());
 		
+		Mockito.when(repository.find(any(), any(), any())).thenReturn(page);
+		
 		Mockito.doNothing().when(repository).deleteById(existingId);
 		Mockito.doThrow(EmptyResultDataAccessException.class).when(repository).deleteById(nonExistingId);
 		Mockito.doThrow(DataIntegrityViolationException.class).when(repository).deleteById(dependentId);
 	}
 
-	/*@Test
+	@Test
 	public void findAllPagedShouldReturnPage() {
 		
-		Pageable pageable = PageRequest.of(0, 12);
+		PageRequest pageable = PageRequest.of(0, 12);
 		
-		Page<ProductDTO> result = service.findAllPaged(dependentId, pageable);
+		Page<ProductDTO> result = service.findAllPaged(0L, "", pageable);
 		
 		Assertions.assertNotNull(result);
 		
-		Mockito.verify(repository, times(1)).findAll(pageable);
-	}*/
+	}
 	
 	@Test
 	public void deleteShouldThrowDatabaseExceptionWhenDependentId() {
